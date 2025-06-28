@@ -1,48 +1,48 @@
-# JaCaMo Smart Home Project (v1.2)
+# Projeto JaCaMo Smart Home (v1.2)
 
-This is a JaCaMo project implementing a smart home system with multiple artifacts (Camera, Air Conditioner, Lamp, Door Lock, and Curtain) controlled by Jason agents. Each artifact has a GUI to display its state and provide user interaction, with the system enforcing realistic constraints and coordination for a cohesive smart home experience.
+Este é um projeto JaCaMo que implementa um sistema de casa inteligente com múltiplos artefatos (Câmera, Ar-Condicionado, Lâmpada, Fechadura e Cortina) controlados por agentes Jason. Cada artefato possui uma interface gráfica (GUI) para exibir seu estado e permitir interação do usuário, com o sistema aplicando restrições realistas e coordenação para uma experiência coesa de casa inteligente.
 
-## Overview
+## Visão Geral
 
-The project simulates a smart home environment where:
+O projeto simula um ambiente de casa inteligente onde:
 
-- **Camera** detects people and their location (e.g., `frente`, `dentro`, `saindo`) and triggers actions for other devices.
-- **Air Conditioner** displays and controls ambient and set temperatures.
-- **Lamp** shows and toggles its on/off state.
-- **Door Lock** manages open/closed and locked/unlocked states, with constraints preventing opening a locked door or locking an open door.
-- **Curtain** displays and adjusts its opening level (0-100%) via a slider.
+- **Câmera** detecta pessoas e sua localização (ex: `frente`, `dentro`, `saindo`) e aciona ações nos demais dispositivos.
+- **Ar-Condicionado** exibe e controla as temperaturas ambiente e desejada.
+- **Lâmpada** mostra e alterna seu estado (ligada/desligada).
+- **Fechadura** gerencia os estados aberta/fechada e trancada/destrancada, com restrições que impedem abrir uma porta trancada ou trancar uma porta aberta.
+- **Cortina** exibe e ajusta o nível de abertura (0-100%) via um slider.
 
-The system uses CArtAgO for artifacts, Jason for agent logic, and Swing for GUIs. The Camera GUI only shows its own data (`ligada`, `local`, `pessoa_presente`), while other artifacts display their specific states and controls.
+O sistema utiliza CArtAgO para artefatos, Jason para lógica dos agentes e Swing para GUIs. A GUI da Câmera mostra apenas seus próprios dados (`ligada`, `local`, `pessoa_presente`), enquanto os outros artefatos exibem seus estados e controles específicos.
 
-## Prerequisites
+## Pré-requisitos
 
 - **Java**: OpenJDK 21
-- **Gradle**: Included in the project (via `gradlew`)
-- **JaCaMo**: Framework for multi-agent systems (included in dependencies)
+- **Gradle**: Incluído no projeto (via `gradlew`)
+- **JaCaMo**: Framework para sistemas multiagentes (incluído nas dependências)
 
-### Setting Up Java
+### Configurando o Java
 
-Ensure Java 21 is installed:
+Garanta que o Java 21 está instalado:
 
 ```bash
 java -version
 ```
 
-If not installed (Ubuntu)
+Se não estiver instalado (Ubuntu):
 
 ```bash
 sudo apt update
 sudo apt install openjdk-21-jdk
 ```
 
-Set `JAVA_HOME`:
+Defina o `JAVA_HOME`:
 
 ```bash
 export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
 export PATH=$JAVA_HOME/bin:$PATH
 ```
 
-To make this change persistent, add it to your `~/.bashrc`:
+Para tornar essa alteração persistente, adicione ao seu `~/.bashrc`:
 
 ```bash
 echo 'export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64' >> ~/.bashrc
@@ -50,46 +50,46 @@ echo 'export PATH=$JAVA_HOME/bin:$PATH' >> ~/.bashrc
 source ~/.bashrc
 ```
 
-## Getting Started
+## Primeiros Passos
 
-1. **Clone the Repository**:
+1. **Clone o Repositório**:
 
     ```bash
     git clone https://github.com/gabriel-feltes/template-mas.git
     cd template-mas
     ```
 
-2. **Run the Application**:
+2. **Execute a Aplicação**:
 
     ```bash
     ./gradlew run
     ```
 
-    This starts the JaCaMo application, launching GUIs for all artifacts.
+    Isso inicia a aplicação JaCaMo, abrindo as GUIs de todos os artefatos.
 
-## Project Structure
+## Estrutura do Projeto
 
-### Artifacts
+### Artefatos
 
-Located in `src/artifacts/`:
+Localizados em `src/artifacts/`:
 
-- **Camera.java**: Displays camera state (`ligada`, `local`, `pessoa_presente`) with inputs for person and location. Validates unknown persons via a dialog.
-- **ArCondicionado.java**: Shows ambient and set temperatures, with an input field to adjust the desired temperature.
-- **Lampada.java**: Displays lamp state (`ligado`) with "Ligar" and "Desligar" buttons.
-- **Fechadura.java**: Shows door state (`aberta`, `trancada`) with "Abrir", "Fechar", "Trancar", and "Destrancar" buttons. Enforces constraints: cannot open a locked door or lock an open door.
-- **Cortina.java**: Displays curtain opening level (`nivel_abertura`) with a slider (0-100%).
+- **Camera.java**: Exibe o estado da câmera (`ligada`, `local`, `pessoa_presente`) com entradas para pessoa e local. Valida pessoas desconhecidas via diálogo.
+- **ArCondicionado.java**: Mostra temperaturas ambiente e desejada, com campo para ajustar a temperatura desejada.
+- **Lampada.java**: Exibe o estado da lâmpada (`ligado`) com botões "Ligar" e "Desligar".
+- **Fechadura.java**: Mostra o estado da porta (`aberta`, `trancada`) com botões "Abrir", "Fechar", "Trancar" e "Destrancar". Aplica restrições: não é possível abrir uma porta trancada ou trancar uma porta aberta.
+- **Cortina.java**: Exibe o nível de abertura da cortina (`nivel_abertura`) com um slider (0-100%).
 
-### Agents
+### Agentes
 
-Located in `src/agt/`:
+Localizados em `src/agt/`:
 
-- **camera.asl**: Initializes the camera artifact, detects movement, and coordinates with other agents (e.g., unlocking the door for the homeowner).
-- **ar_condicionado.asl**: Manages the air conditioner, adjusting temperature based on homeowner preferences or intruder alerts.
-- **lampada.asl**: Controls the lamp, turning it on/off for homeowner presence or intruder scenarios, and handles manual button actions.
-- **fechadura.asl**: Manages the door lock, enforcing constraints for manual actions and coordinating with camera events.
-- **cortina.asl**: Adjusts the curtain’s opening level based on homeowner presence or manual slider input.
+- **camera.asl**: Inicializa o artefato câmera, detecta movimento e coordena com outros agentes (ex: destrancar a porta para o proprietário).
+- **ar_condicionado.asl**: Gerencia o ar-condicionado, ajustando a temperatura conforme preferências do proprietário ou alertas de intruso.
+- **lampada.asl**: Controla a lâmpada, ligando/desligando para presença do proprietário ou cenários de intruso, e lida com ações manuais.
+- **fechadura.asl**: Gerencia a fechadura, aplicando restrições para ações manuais e coordenando com eventos da câmera.
+- **cortina.asl**: Ajusta o nível de abertura da cortina conforme presença do proprietário ou entrada manual pelo slider.
 
-### Configuration
+### Configuração
 
 - **main.jcm**:
 
@@ -103,66 +103,66 @@ mas main {
 }
 ```
 
-## Features
+## Funcionalidades
 
-- **Camera**:
-  - GUI displays: Camera status (Ligada/Desligada), Location (frente, saindo, dentro), Person (e.g., jonas, desconhecido).
-    - Validates unknown persons with a confirmation dialog.
-    - Triggers actions for other devices (e.g., unlock door, turn on lamp) based on person and location.
-- **Air Conditioner**:
-  - GUI displays: Ambient temperature, set temperature, input field for desired temperature.
-    - Simulates temperature regulation (increases/decreases toward set temperature).
-- **Lamp**:
-  - GUI displays: Lamp status (Ligada/Desligada) with toggle buttons.
-    - Responds to manual clicks and camera-driven events (e.g., turn off for intruders).
-- **Door Lock**:
-  - GUI displays: Door state (Aberta/Fechada), Lock state (Trancada/Não) with buttons.
-    - Constraints: Cannot open a locked door or lock an open door; shows error dialogs for invalid actions.
-- **Curtain**:
-  - GUI displays: Opening level (0-100%) with a slider.
-    - Updates level based on manual slider input or camera-driven events (e.g., close for intruders).
+- **Câmera**:
+  - GUI exibe: Status da câmera (Ligada/Desligada), Local (frente, saindo, dentro), Pessoa (ex: jonas, desconhecido).
+    - Valida pessoas desconhecidas com diálogo de confirmação.
+    - Aciona ações nos outros dispositivos (ex: destrancar porta, ligar lâmpada) conforme pessoa e local.
+- **Ar-Condicionado**:
+  - GUI exibe: Temperatura ambiente, temperatura desejada, campo para ajuste.
+    - Simula regulação de temperatura (aumenta/diminui até atingir a desejada).
+- **Lâmpada**:
+  - GUI exibe: Status da lâmpada (Ligada/Desligada) com botões de alternância.
+    - Responde a cliques manuais e eventos da câmera (ex: desligar para intrusos).
+- **Fechadura**:
+  - GUI exibe: Estado da porta (Aberta/Fechada), Estado da tranca (Trancada/Não) com botões.
+    - Restrições: Não é possível abrir porta trancada ou trancar porta aberta; mostra diálogos de erro para ações inválidas.
+- **Cortina**:
+  - GUI exibe: Nível de abertura (0-100%) com slider.
+    - Atualiza nível conforme slider ou eventos da câmera (ex: fechar para intrusos).
 
-## Testing Scenarios
+## Cenários de Teste
 
-1. **Homeowner Arriving**:
-    - Camera GUI: Set `pessoa = "jonas"`, `local = "frente"`, click "OK".
-    - Expected:
+1. **Proprietário Chegando**:
+    - GUI da Câmera: Defina `pessoa = "jonas"`, `local = "frente"`, clique "OK".
+    - Esperado:
         - Log: `[camera] Proprietário jonas chegando na frente da casa`, `[fechadura] Porta destrancada e aberta`, `[lampada] Lâmpada ligada`, `[cortina] Cortina aberta`, `[ar_condicionado] Definindo temperatura: 25`.
-        - GUIs: Camera (Pessoa: jonas, Local: frente), Fechadura (Porta: Aberta, Trancada: Não), Lampada (Ligada), Cortina (100%), ArCondicionado (25°C).
+        - GUIs: Câmera (Pessoa: jonas, Local: frente), Fechadura (Porta: Aberta, Trancada: Não), Lâmpada (Ligada), Cortina (100%), ArCondicionado (25°C).
 
-2. **Homeowner Leaving**:
-    - Camera GUI: Set `pessoa = "jonas"`, `local = "saindo"`, click "OK".
-    - Expected:
+2. **Proprietário Saindo**:
+    - GUI da Câmera: Defina `pessoa = "jonas"`, `local = "saindo"`, clique "OK".
+    - Esperado:
         - Log: `[camera] Proprietário jonas saindo da casa`, `[fechadura] Porta fechada e trancada`, `[lampada] Lâmpada desligada`, `[cortina] Cortina fechada`, `[ar_condicionado] Ar-condicionado desligado`.
-        - GUIs: Camera (Local: saindo), Fechadura (Porta: Fechada, Trancada: Sim), Lampada (Desligada), Cortina (0%), ArCondicionado (off).
+        - GUIs: Câmera (Local: saindo), Fechadura (Porta: Fechada, Trancada: Sim), Lâmpada (Desligada), Cortina (0%), ArCondicionado (off).
 
-3. **Intruder Detected**:
-    - Camera GUI: Set `pessoa = "desconhecido"`, `local = "dentro"`, click "OK", confirm dialog.
-    - Expected:
+3. **Intruso Detectado**:
+    - GUI da Câmera: Defina `pessoa = "desconhecido"`, `local = "dentro"`, clique "OK", confirme no diálogo.
+    - Esperado:
         - Log: `[camera] Intruso detectado`, `[fechadura] Porta fechada e trancada`, `[lampada] Lâmpada desligada`, `[cortina] Cortina fechada`, `[ar_condicionado] Definindo temperatura: 35`.
-        - GUIs: Camera (Pessoa: desconhecido, Local: dentro), Fechadura (Porta: Fechada, Trancada: Sim), Lampada (Desligada), Cortina (0%), ArCondicionado (35°C).
+        - GUIs: Câmera (Pessoa: desconhecido, Local: dentro), Fechadura (Porta: Fechada, Trancada: Sim), Lâmpada (Desligada), Cortina (0%), ArCondicionado (35°C).
 
-4. **Manual Controls**:
-    - **Lampada**: Click "Ligar" (GUI: Ligada, Log: `[lampada] Liguei a Lâmpada!`), click "Desligar" (GUI: Desligada).
+4. **Controles Manuais**:
+    - **Lâmpada**: Clique "Ligar" (GUI: Ligada, Log: `[lampada] Liguei a Lâmpada!`), clique "Desligar" (GUI: Desligada).
     - **Fechadura**:
-        - With door closed and locked: Click "Abrir" (Error: "Não é possível abrir a porta enquanto ela está trancada").
-        - Click "Destrancar" then "Abrir" (GUI: Porta: Aberta, Trancada: Não).
-        - With door open: Click "Trancar" (Error: "Não é possível trancar a porta enquanto ela está aberta").
-        - Click "Fechar" then "Trancar" (GUI: Porta: Fechada, Trancada: Sim).
-    - **Cortina**: Move slider to 50% (GUI: 50%, Log: `[cortina] Nível de abertura DEPOIS: 50`).
-    - **ArCondicionado**: Set temperature to 22 (GUI: 22°C, Log: `[ar_condicionado] Nova temperatura desejada definida: 22`).
+        - Com porta fechada e trancada: Clique "Abrir" (Erro: "Não é possível abrir a porta enquanto ela está trancada").
+        - Clique "Destrancar" e depois "Abrir" (GUI: Porta: Aberta, Trancada: Não).
+        - Com porta aberta: Clique "Trancar" (Erro: "Não é possível trancar a porta enquanto ela está aberta").
+        - Clique "Fechar" e depois "Trancar" (GUI: Porta: Fechada, Trancada: Sim).
+    - **Cortina**: Mova o slider para 50% (GUI: 50%, Log: `[cortina] Nível de abertura DEPOIS: 50`).
+    - **ArCondicionado**: Defina temperatura para 22 (GUI: 22°C, Log: `[ar_condicionado] Nova temperatura desejada definida: 22`).
 
-## Future Improvements
+## Melhorias Futuras
 
-- Add more constraints (e.g., air conditioner only operates within a specific temperature range).
-- Reduce console output for cleaner logs.
-- Implement a centralized dashboard to monitor all devices.
-- Implement persistence for device states across sessions.
+- Adicionar mais restrições (ex: ar-condicionado só opera dentro de uma faixa de temperatura).
+- Reduzir a saída no console para logs mais limpos.
+- Implementar um painel centralizado para monitorar todos os dispositivos.
+- Implementar persistência dos estados dos dispositivos entre sessões.
 
-## Contributing
+## Contribuindo
 
-Feel free to fork the repository, make changes, and submit pull requests.
+Sinta-se à vontade para fazer fork do repositório, propor mudanças e enviar pull requests.
 
 ---
 
-This project is built using the JaCaMo framework. For more details, visit [JaCaMo](https://jacamo-lang.github.io/).
+Este projeto é construído usando o framework JaCaMo. Para mais detalhes, visite [JaCaMo](https://jacamo-lang.github.io/).
