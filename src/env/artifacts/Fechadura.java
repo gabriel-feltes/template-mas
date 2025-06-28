@@ -1,157 +1,149 @@
 package artifacts;
 
-import cartago.*;
-import cartago.tools.GUIArtifact;
-import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-public class Fechadura extends GUIArtifact {
+import cartago.*;
+import cartago.tools.GUIArtifact;
 
-	private InterfaceFechadura frame;
-	private FechaduraModel fechadura_model = new FechaduraModel(false);
-	
-	
-    void setup(boolean fechada, boolean trancada) {
-    	fechadura_model.setFechada(fechada);
-    	fechadura_model.setTrancada(trancada);
-		defineObsProperty("fechada", fechadura_model.isFechada());
-		defineObsProperty("trancada", fechadura_model.isTrancada());
-		create_frame();
-	}
+public class Fechadura extends GUIArtifact {
+    
+    private InterfaceFechadura frame;
+    private boolean aberta = false;
+    private boolean trancada = true;
     
     public void setup() {
-    	fechadura_model.setFechada(true);
-    	fechadura_model.setTrancada(false);
-		defineObsProperty("fechada", fechadura_model.isFechada());
-		defineObsProperty("trancada", fechadura_model.isTrancada());
-		create_frame();
-	}
+        defineObsProperty("aberta", aberta);
+        defineObsProperty("trancada", trancada);
+        create_frame();
+        System.out.println("[fechadura] Porta Fechada!");
+        System.out.println("[fechadura] TRANQUEI a porta!");
+        System.out.println("[fechadura] Porta Trancada!");
+    }
     
     void create_frame() {
-    	frame = new InterfaceFechadura();
-		linkActionEventToOp(frame.macanetaButton,"macaneta");
-		linkActionEventToOp(frame.fechaduraButton,"fechadura");
-		linkWindowClosingEventToOp(frame, "closed");
-		frame.setVisible(true);
+        frame = new InterfaceFechadura();
+        linkActionEventToOp(frame.openButton, "open");
+        linkActionEventToOp(frame.closeButton, "close");
+        linkActionEventToOp(frame.lockButton, "lock");
+        linkActionEventToOp(frame.unlockButton, "unlock");
+        frame.setVisible(true);
     }
 
-	@OPERATION
-	void destrancar() {
-		fechadura_model.setTrancada(false);
-		getObsProperty("trancada").updateValue(fechadura_model.isTrancada());
-	}
-
-	@OPERATION
-	void trancar() {
-		if(fechadura_model.isFechada()) {
-			fechadura_model.setTrancada(true);
-			getObsProperty("trancada").updateValue(fechadura_model.isTrancada());
-		}
-	}
-
-	@OPERATION
-    void abrir() {
-		if(fechadura_model.isTrancada() == false) {
-			fechadura_model.setFechada(false);
-			getObsProperty("fechada").updateValue(fechadura_model.isFechada());
-		}
-	}
-
-	@OPERATION
-	void fechar() {
-		fechadura_model.setFechada(true);
-		getObsProperty("fechada").updateValue(fechadura_model.isFechada());
+    @OPERATION
+    void open() {
+        if (trancada) {
+            System.out.println("[fechadura] Não é possível abrir: porta está trancada");
+            JOptionPane.showMessageDialog(frame, "Não é possível abrir a porta enquanto ela está trancada.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        System.out.println("[fechadura] Operação open chamada");
+        aberta = true;
+        getObsProperty("aberta").updateValue(aberta);
+        System.out.println("[fechadura] Porta aberta!");
+        execInternalOp("updateGUI");
     }
-	
-	@INTERNAL_OPERATION 
-	void macaneta(ActionEvent ev){
-		if(fechadura_model.isTrancada() == false) {
-			if(fechadura_model.isFechada()) {
-				fechadura_model.setFechada(false);;
-			}else {
-				fechadura_model.setFechada(true);;
-			}
-			getObsProperty("fechada").updateValue(fechadura_model.isFechada());
-		}
-		signal("movimento_macaneta");
-	}
-	
-	@INTERNAL_OPERATION 
-	void fechadura(ActionEvent ev){
-		if(fechadura_model.isFechada()) {
-			if(fechadura_model.isTrancada()) {
-				fechadura_model.setTrancada(false);;
-			}else {
-				fechadura_model.setTrancada(true);;
-			}
-			getObsProperty("trancada").updateValue(fechadura_model.isTrancada());
-			signal("movimento_fechadura");
-		}
-	}
 
-	
-	
-	class FechaduraModel{
-		boolean fechada = true;
-		boolean trancada = true;
+    @OPERATION
+    void close() {
+        System.out.println("[fechadura] Operação close chamada");
+        aberta = false;
+        getObsProperty("aberta").updateValue(aberta);
+        System.out.println("[fechadura] Porta fechada!");
+        execInternalOp("updateGUI");
+    }
 
-		public boolean isTrancada() {
-			return trancada;
-		}
+    @OPERATION
+    void lock() {
+        if (aberta) {
+            System.out.println("[fechadura] Não é possível trancar: porta está aberta");
+            JOptionPane.showMessageDialog(frame, "Não é possível trancar a porta enquanto ela está aberta.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        System.out.println("[fechadura] Operação lock chamada");
+        trancada = true;
+        getObsProperty("trancada").updateValue(trancada);
+        System.out.println("[fechadura] Porta trancada!");
+        execInternalOp("updateGUI");
+    }
 
-		public void setTrancada(boolean trancada) {
-			this.trancada = trancada;
-		}
+    @OPERATION
+    void unlock() {
+        System.out.println("[fechadura] Operação unlock chamada");
+        trancada = false;
+        getObsProperty("trancada").updateValue(trancada);
+        System.out.println("[fechadura] Porta destrancada!");
+        execInternalOp("updateGUI");
+    }
+    
+    @INTERNAL_OPERATION
+    void closed(WindowEvent ev) {
+        System.out.println("[fechadura] Janela fechada");
+        signal("closed");
+    }
+    
+    @OPERATION
+    void updateGUI() {
+        System.out.println("[fechadura] Atualizando GUI");
+        frame.updateStatus();
+    }
+    
+    class InterfaceFechadura extends JFrame {
+        private JButton openButton, closeButton, lockButton, unlockButton;
+        private JLabel statusLabel, trancadaLabel;
+        
+        public InterfaceFechadura() {
+            setTitle("Fechadura");
+            setSize(200, 200);
+            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            
+            JPanel panel = new JPanel();
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+            
+            statusLabel = new JLabel("Porta: Fechada");
+            trancadaLabel = new JLabel("Porta Trancada: Sim");
 
-		public FechaduraModel(boolean fechada, boolean trancada) {
-			super();
-			this.fechada = fechada;
-			this.trancada = trancada;
-		}
-
-		public FechaduraModel(boolean fechada) {
-			super();
-			this.fechada = fechada;
-		}
-
-		public boolean isFechada() {
-			return fechada;
-		}
-
-		public void setFechada(boolean fechada) {
-			this.fechada = fechada;
-		}
-	}
-		
-	class InterfaceFechadura extends JFrame {	
-			
-		private JButton macanetaButton;
-		private JButton fechaduraButton;
-			
-		public InterfaceFechadura(){
-			setTitle(" Fechadura ");
-			setSize(200,100);
-							
-			JPanel panel = new JPanel();
-			setContentPane(panel);
-				
-			macanetaButton = new JButton(" Abrir | Fechar ");
-			macanetaButton.setSize(80,50);
-			
-			fechaduraButton = new JButton("(Des)Trancar");
-			fechaduraButton.setSize(80,50);
-
-			panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-			panel.add(macanetaButton);
-			panel.add(fechaduraButton);
-				
-		}
-	}
-
-		
+            openButton = new JButton("Abrir");
+            closeButton = new JButton("Fechar");
+            lockButton = new JButton("Trancar");
+            unlockButton = new JButton("Destrancar");
+            
+            openButton.addActionListener(e -> {
+                System.out.println("[fechadura] Botão Abrir clicado");
+                execInternalOp("open");
+            });
+            closeButton.addActionListener(e -> {
+                System.out.println("[fechadura] Botão Fechar clicado");
+                execInternalOp("close");
+            });
+            lockButton.addActionListener(e -> {
+                System.out.println("[fechadura] Botão Trancar clicado");
+                execInternalOp("lock");
+            });
+            unlockButton.addActionListener(e -> {
+                System.out.println("[fechadura] Botão Destrancar clicado");
+                execInternalOp("unlock");
+            });
+            
+            panel.add(statusLabel);
+            panel.add(trancadaLabel);
+            panel.add(openButton);
+            panel.add(closeButton);
+            panel.add(lockButton);
+            panel.add(unlockButton);
+            
+            setContentPane(panel);
+            updateStatus();
+        }
+        
+        public void updateStatus() {
+            statusLabel.setText("Porta: " + (aberta ? "Aberta" : "Fechada"));
+            trancadaLabel.setText("Porta Trancada: " + (trancada ? "Sim" : "Não"));
+        }
+    }
 }
-
-

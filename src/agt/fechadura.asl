@@ -1,42 +1,61 @@
-
+/* Initial goals */
 !inicializar_fechadura.
 
+/* Plans */
 +!inicializar_fechadura
-  <- 	makeArtifact("fechadura_quarto","artifacts.Fechadura",[],D);
-  	   	focus(D);
-  	   	!fechar_porta.
-  	   	
-+movimento_macaneta <- !verificar_fechada.
+  <- makeArtifact("fechadura","artifacts.Fechadura",[],F);
+     focus(F);
+     close;
+     lock;
+     updateGUI.
 
-+!verificar_fechada: trancada(true) 
-  <-  .print("Alguém mexeu na MAÇANETA, porém a porta está trancada!").
-+!verificar_fechada: fechada(true)
-  <-  .print("Alguém mexeu na MAÇANETA e FECHOU a porta!").
-+!verificar_fechada: fechada(false)
-  <-  .print("Alguém mexeu na MAÇANETA e ABRIU a porta!").
-  
-+movimento_fechadura <- !verificar_trancada.
++!unlock_and_open
+  <- unlock;
+     open;
+     .print("Porta destrancada e aberta para o proprietário");
+     updateGUI.
 
-+!verificar_trancada: trancada(true)
-  <-  .print("Alguém mexeu na FECHADURA e TRANCOU a porta!").
-+!verificar_trancada: trancada(false)
-  <-  .print("Alguém mexeu na FECHADURA e DESTRANCOU a porta!").
-      
-+closed  <-  .print("Close event from GUIInterface").
-   
-+!fechar_porta: fechada(true)
- 	<-  .print("Porta Fechada!");
- 		!trancar_porta.
- 	
-+!fechar_porta: fechada(false)
- 	<-  fechar;
- 		.print("FECHEI a porta");
- 		!fechar_porta.
- 		
-+!trancar_porta: trancada(true)
- 	<- .print("Porta Trancada!").
- 	
-+!trancar_porta: trancada(false)
- 	<- 	trancar;
- 		.print("TRANQUEI a porta!");
- 		!trancar_porta.
++!close_and_lock
+  <- close;
+     lock;
+     .print("Porta fechada e trancada após saída do proprietário");
+     updateGUI.
+
++!intruder_alert
+  <- close;
+     lock;
+     .print("Porta fechada e trancada para impedir intruso");
+     updateGUI.
+
++!open : trancada(true)
+  <- .print("Não é possível abrir a porta: está trancada");
+     updateGUI.
+
++!open : trancada(false)
+  <- open;
+     .print("Porta aberta manualmente");
+     updateGUI.
+
++!close
+  <- close;
+     .print("Porta fechada manualmente");
+     updateGUI.
+
++!lock : aberta(true)
+  <- .print("Não é possível trancar a porta: está aberta");
+     updateGUI.
+
++!lock : aberta(false)
+  <- lock;
+     .print("Porta trancada manualmente");
+     updateGUI.
+
++!unlock
+  <- unlock;
+     .print("Porta destrancada manualmente");
+     updateGUI.
+
++closed <- .print("Close event from GUIInterface").
+
++!updateGUI
+  <- .send(fechadura, achieve, updateGUI).

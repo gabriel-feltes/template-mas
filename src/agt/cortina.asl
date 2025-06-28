@@ -1,21 +1,28 @@
-
+/* Initial goals */
 !inicializar_cortina.
 
+/* Plans */
 +!inicializar_cortina
-  <- 	makeArtifact("cortina_quarto","artifacts.Cortina",[],D);
-  	   	focus(D);
-  	   	!abrir_cortina.
-  	   	
-+ajuste_cortina 
-  <-  !!verificar_ajuste.
-      
-+closed  <-  .print("Close event from GUIInterface").
-   
- +!verificar_ajuste: nivel_abertura(N) 
- 	<-  .print("Nível de abertura da cortina: ", N).
- 	
- +!abrir_cortina: nivel_abertura(N) 
- 	<-  .print("Nível de abertura ANTES: ", N);
- 		abrir;
- 		?nivel_abertura(ND);
- 		.print("Nível de abertura DEPOIS: ", ND).
+  <- makeArtifact("cortina","artifacts.Cortina",[],C);
+     focus(C);
+     updateGUI.
+
++!set_preferred_lighting
+  <- definir_nivel_abertura(100);
+     .print("Cortina aberta para o proprietário");
+     updateGUI.
+
++!turn_off
+  <- definir_nivel_abertura(0);
+     .print("Cortina fechada após saída do proprietário");
+     updateGUI.
+
++!intruder_alert
+  <- definir_nivel_abertura(0);
+     .print("Cortina fechada para dificultar intruso");
+     updateGUI.
+
++closed <- .print("Close event from GUIInterface").
+
++!updateGUI
+  <- .send(cortina, achieve, updateGUI).

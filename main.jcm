@@ -10,19 +10,9 @@
 */
 
 mas main {
-
-    agent bob: sample_agent.asl {
-      focus: w.c1 
-    }
-
     agent ar_condicionado: ar_condicionado.asl
     agent camera: camera.asl
     agent cortina: cortina.asl
     agent lampada: lampada.asl
     agent fechadura: fechadura.asl
-
-
-    workspace w {
-      artifact c1: example.Counter(3) 
-    }
 }

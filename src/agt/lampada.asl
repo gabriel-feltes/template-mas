@@ -1,22 +1,39 @@
-
+/* Initial goals */
 !inicializar_lampada.
 
+/* Plans */
 +!inicializar_lampada
-  <- 	makeArtifact("lampada_quarto","artifacts.Lampada",[],D);
-  	   	focus(D);
-  	   	!ligar_lampada.
-  	   	
-+interuptor 
-  <-  !!verificar_lampada.
-      
-+closed  <-  .print("Close event from GUIInterface").
-   
- +!verificar_lampada: ligada(false)  
- 	<-  .print("Alguém DESLIGOU a Lâmpada").
- 	
- +!verificar_lampada: ligada(true)  
- 	<-  .print("Alguém LIGOU a Lâmpada").
- 	
- +!ligar_lampada
- 	<-  ligar;
- 		.print("Liguei a Lâmpada!").
+  <- makeArtifact("lampada","artifacts.Lampada",[],L);
+     focus(L);
+     ligar;
+     updateGUI.
+
++!set_preferred_lighting
+  <- ligar;
+     .print("Lâmpada ligada para o proprietário");
+     updateGUI.
+
++!turn_off
+  <- desligar;
+     .print("Lâmpada desligada após saída do proprietário");
+     updateGUI.
+
++!intruder_alert
+  <- desligar;
+     .print("Lâmpada desligada para dificultar intruso");
+     updateGUI.
+
++!ligar
+  <- ligar;
+     .print("Lâmpada ligada manualmente");
+     updateGUI.
+
++!desligar
+  <- desligar;
+     .print("Lâmpada desligada manualmente");
+     updateGUI.
+
++closed <- .print("Close event from GUIInterface").
+
++!updateGUI
+  <- .send(lampada, achieve, updateGUI).
